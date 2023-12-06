@@ -9,7 +9,7 @@ const connection = await mysql.createConnection({
 });
 
 /**
- * @typedef {{ [field: string]: number | string | Date }} Payload
+ * @typedef {{ [field: string]: any }} Payload
  */
 
 /**
