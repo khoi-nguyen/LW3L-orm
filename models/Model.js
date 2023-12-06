@@ -103,14 +103,6 @@ export default class Model {
   }
 
   /**
-   * Create a record
-   * @param {Payload} payload
-   */
-  constructor(payload = {}) {
-    this.update(payload);
-  }
-
-  /**
    * Delete the record from the database
    * @param {Payload} where - Object to narrow the delete query
    */
