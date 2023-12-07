@@ -54,7 +54,7 @@ export default class Model {
    * Primary key as a list of fields (in case it's a composite primary key)
    * @type {string[]}
    */
-  _primary = [];
+  static primary = [];
 
   /**
    * Apply changes to the record
@@ -71,7 +71,7 @@ export default class Model {
    * @type {boolean}
    */
   get _isNew() {
-    for (const key of this._primary) {
+    for (const key of this.constructor.primary) {
       if (this[key] === undefined) {
         return true;
       }
@@ -87,7 +87,7 @@ export default class Model {
     /** @type {Payload} */
     const payload = {};
     for (const key in this) {
-      if (!key.startsWith('_') && !this._primary.includes(key)) {
+      if (!key.startsWith('_') && !this.constructor.primary.includes(key)) {
         payload[key] = this[key];
       }
     }
@@ -99,7 +99,7 @@ export default class Model {
    * @type {Payload}
    */
   get _primaryKey() {
-    return Object.fromEntries(this._primary.map(f => [f, this[f]]))
+    return Object.fromEntries(this.constructor.primary.map(f => [f, this[f]]))
   }
 
   /**
