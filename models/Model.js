@@ -39,7 +39,13 @@ async function query(prefix, set = {}, where = {}) {
     }).join(' AND');
   }
   console.log('Executing query', query, values);
-  return (await connection.execute(query, values))[0];
+  try {
+    const [rows] = await connection.execute(query, values);
+    return /** @type{Payload[]} */ (rows);
+  } catch(error) {
+    console.error(error);
+    return [];
+  }
 }
 
 export default class Model {
@@ -56,6 +62,13 @@ export default class Model {
    */
   static primary = [];
 
+  get _primary() {
+    if (!('primary' in this.constructor) || !this.constructor.primary) {
+      throw new Error('Please specify the primary key');
+    }
+    return /** @type{string[]} */ (this.constructor.primary);
+  }
+
   /**
    * Apply changes to the record
    * @param {Payload} payload
@@ -71,7 +84,7 @@ export default class Model {
    * @type {boolean}
    */
   get _isNew() {
-    for (const key of this.constructor.primary) {
+    for (const key of this._primary) {
       if (this[key] === undefined) {
         return true;
       }
@@ -87,7 +100,7 @@ export default class Model {
     /** @type {Payload} */
     const payload = {};
     for (const key in this) {
-      if (!key.startsWith('_') && !this.constructor.primary.includes(key)) {
+      if (!key.startsWith('_') && !this._primary.includes(key)) {
         payload[key] = this[key];
       }
     }
@@ -99,7 +112,7 @@ export default class Model {
    * @type {Payload}
    */
   get _primaryKey() {
-    return Object.fromEntries(this.constructor.primary.map(f => [f, this[f]]))
+    return Object.fromEntries(this._primary.map(f => [f, this[f]]))
   }
 
   /**
