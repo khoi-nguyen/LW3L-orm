@@ -136,6 +136,9 @@ export default class Model {
    * @returns {Promise<void>}
    */
   async save() {
+    if (!('table' in this.constructor) || !this.constructor.table) {
+      throw new Error("You need to specify a table");
+    }
     if (this._isNew) {
       const fields = Object.keys(this._payload);
       let query = `INSERT INTO ${this.constructor.table} (${fields.join(', ')})`;
