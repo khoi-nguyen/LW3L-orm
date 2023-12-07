@@ -62,6 +62,10 @@ export default class Model {
    */
   static primary = [];
 
+  /**
+   * Primary key, as set on the model
+   * @type {string[]}
+   */
   get _primary() {
     if (!('primary' in this.constructor) || !this.constructor.primary) {
       throw new Error('Please specify the primary key');
@@ -70,8 +74,8 @@ export default class Model {
   }
 
   /**
-   * Apply changes to the record
-   * @param {Payload} payload
+   * Apply changes to the record but does not commit them to the database
+   * @param {Payload} payload - Changes to apply to the record
    */
   update(payload = {}) {
     for (const key in payload) {
@@ -137,7 +141,7 @@ export default class Model {
 
   /**
    * Load records from the database
-   * @param {Payload} where
+   * @param {Payload} where - Object to narrow the select query
    * @returns {Promise<Payload[]>}
    */
   static async loadMany(where = {}) {
